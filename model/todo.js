@@ -3,8 +3,10 @@ var db = require('../util/db'),
 
 var logger = new (winston.Logger)({
     transports: [
-        new (winston.transports.Console)(),
-        new (winston.transports.File)({ filename: 'somefile.log' })
+        new winston.transports.Console({
+            json: true,
+            colorize: true
+        })
     ]
 });
 
@@ -21,14 +23,14 @@ var ToDo = db.mongoose.model('ToDo', ToDoSchema);
 
 exports.add = function(todo, callback) {
     logger.info('Adding To Do: ' + JSON.stringify(todo));
-    var todo = new ToDo(todo);
+    var todoInstance = new ToDo(todo);
 
-    todo.save(function (err){
+    todoInstance.save(function (err){
         if (err) {
             logger.error(err);
             callback(err);
         } else {
-            callback(null, todo);
+            callback(null, todoInstance);
         }
     });
 };
@@ -45,9 +47,9 @@ exports.findAll = function(callback) {
         }
     });
 
-}
+};
 
-exports.findByCreatedBy = function(id, callback) {
+exports.findByCreatedBy = function(id,  callback) {
     logger.info('Searching for To Dos by Created By Id: ' + id);
 
     ToDo.find({createdBy: id}, function (err, member) {
@@ -64,9 +66,23 @@ exports.findByCreatedBy = function(id, callback) {
 exports.findByAssignedTo = function(id, callback) {
     logger.info('Searching for To Dos by Assigned To Id: ' + id);
 
-    ToDo.findOne({assignedTo: id}, function (err, member) {
+    ToDo.find({assignedTo : id}, function (err, member) {
         if (err) {
-            logger.error(err);
+            logger.error('MFing Error: ' + err);
+            callback(err);
+        } else {
+            callback(null, member);
+        }
+    });
+
+};
+
+exports.find = function(field, value, callback) {
+    logger.info('Querying all to dos by Field: ' + field + ' and Value: ' + value);
+
+    ToDo.where(field).equals(value).exec(function (err, member) {
+        if (err) {
+            logger.error('MFing Error: ' + err);
             callback(err);
         } else {
             callback(null, member);
@@ -78,7 +94,7 @@ exports.findByAssignedTo = function(id, callback) {
 exports.findById = function(id, callback) {
     logger.info('Searching for To Do: ' + id);
 
-    ToDo.findOne({_id: id}, function (err, result) {
+    ToDo.findById(id, function (err, result) {
         if (err) {
             logger.error(err);
             callback(err);
@@ -105,7 +121,7 @@ exports.update = function (id, todo, callback) {
 
 };
 
-exports.delete = function (id, callback) {
+exports.remove = function (id, callback) {
     logger.log('info', 'Deleting To Do: ' + id );
 
     ToDo.remove({_id: id}, function(err, result){

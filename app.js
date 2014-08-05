@@ -1,5 +1,5 @@
 var express = require('express');
-var logger = require('winston');
+var winston = require('winston');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressWinston = require('express-winston');
@@ -12,6 +12,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.disable('x-powered-by');
+
+
+app.use(expressWinston.logger({
+    transports: [
+        new winston.transports.Console({
+            json: true,
+            colorize: true
+        })
+    ],
+    meta: true, // optional: control whether you want to log the meta data about the request (default to true)
+    msg: "HTTP {{req.method}} {{req.url}}" // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
+}));
 
 app.use('/todos', todos);
 
@@ -30,6 +42,7 @@ if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         res.send(err);
+        next(err);
     });
 }
 
@@ -38,18 +51,7 @@ if (app.get('env') === 'development') {
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.send(err);
+    next(err);
 });
-
-app.use(expressWinston.logger({
-    transports: [
-        new logger.transports.Console({
-            json: true,
-            colorize: true
-        })
-    ],
-    meta: true, // optional: control whether you want to log the meta data about the request (default to true)
-    msg: "HTTP {{req.method}} {{req.url}}" // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
-}));
-
 
 module.exports = app;

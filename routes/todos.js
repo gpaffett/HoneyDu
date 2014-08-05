@@ -1,20 +1,49 @@
-var express = require('express');
-var todos = require('../model/todo');
-
-winston = require('winston');
+var express = require('express'),
+    todos = require('../model/todo'),
+    winston = require('winston');
 
 var logger = new (winston.Logger)({
     transports: [
-        new (winston.transports.Console)(),
-        new (winston.transports.File)({ filename: 'somefile.log' })
+        new winston.transports.Console({
+            json: true,
+            colorize: true
+        })
     ]
 });
 
 var router = express.Router();
 
 //Find All ToDos
-router.get('/', function(req, res) {
-    todos.findAll( function (err, results) {
+router.get('/', function (req, res) {
+
+    var field = req.query.field,
+        value = req.query.value;
+
+    if (field && value) {
+        logger.info('Finding all to dos by Field: ' + field + ' and Value: ' + value);
+        todos.find(field, value, function (err, results) {
+            if (err) {
+                throw err;
+            }
+            res.send(results);
+        })
+    } else {
+        logger.info('Finding all todos');
+        todos.findAll(function (err, results) {
+            if (err) {
+                throw err;
+            }
+            res.send(results);
+        })
+    }
+});
+
+router.get('/assignedTo/:id', function (req, res) {
+    var id = req.params.id;
+
+    logger.info('Finding all To Dos Assigned To: ' + id);
+
+    todos.findByAssignedTo(req.params.id, function (err, results) {
         if (err) {
             throw err;
         }
@@ -22,11 +51,24 @@ router.get('/', function(req, res) {
     })
 });
 
-//Find To Do by User ID
-router.get('/:id', function(req, res){
-    var assignedToId = req.params.id;
+router.get('/createdBy/:id', function (req, res) {
+    var id = req.params.id;
 
-    todos.findByAssignedTo(assignedToId, function(err, result){
+    logger.info('Finding all To Dos Created By: ' + id);
+    todos.findByCreatedBy(id, function (err, results) {
+        if (err) {
+            throw err;
+        }
+        res.send(results);
+    })
+});
+
+//Find To Do by ID
+router.get('/:id', function (req, res) {
+    logger.info('Getting by ID');
+    var id = req.params.id;
+
+    todos.findById(id, function (err, result) {
         if (err) {
             throw err;
         }
@@ -35,10 +77,11 @@ router.get('/:id', function(req, res){
 });
 
 //Add To Do
-router.post('/', function(req, res) {
+router.post('/', function (req, res) {
+    logger.info('Adding todo');
     var todo = req.body;
 
-    todos.add(todo, function(err, result) {
+    todos.add(todo, function (err, result) {
         if (err) {
             throw err;
         }
@@ -47,36 +90,31 @@ router.post('/', function(req, res) {
 });
 
 //Update To Do
-router.put('/:id', function(req, res){
+router.put('/:id', function (req, res) {
+    logger.info('Updating todo');
+
     var todoId = req.params.id;
     var todo = req.body;
 
-    todos.update(todoId, todo, function(err, results){
+    todos.update(todoId, todo, function (err, result) {
         if (err) {
             throw err;
         }
-        res.send(results);
+        res.send({'updateCount': result});
     });
 });
 
-//Delete Member
-router.delete('/:id', function(req, res){
+//Delete To Do
+router.delete('/:id', function (req, res) {
+    logger.info('Removing todo');
     var todoId = req.params.id;
 
-    todos.delete(todoId, function(err, result){
+    todos.remove(todoId, function (err, result) {
         if (err) {
             throw err;
         }
 
-        if (result.value >= 1 ) {
-            res.status(200);
-            res.send();
-        } else {
-            res.status(410);
-            res.send( {'status': '410',
-                       'message': 'No records deleted'});
-        }
-
+        res.send({'deleteCount': result});
 
     });
 });
