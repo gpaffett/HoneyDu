@@ -9,6 +9,7 @@
     "express": "~4.2.0",
     "winston": "~0.7.3",
     "express-winston": "0.2.x",
+    "static-favicon": "~1.0.0",
     "mocha": "~1.21.3",
     "cookie-parser": "~1.0.1",
     "body-parser": "~1.0.0",

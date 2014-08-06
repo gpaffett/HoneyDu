@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="row">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Your To Do's</div>
+            <!-- Table -->
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Assigned To</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="todo in todos">
+                    <td>{{todo.assignedTo}}</td>
+                    <td>{{todo.content}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

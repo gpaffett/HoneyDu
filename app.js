@@ -1,4 +1,8 @@
+"use strict";
+
 var express = require('express');
+var path = require('path');
+var favicon = require('static-favicon');
 var winston = require('winston');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -8,9 +12,11 @@ var todos = require('./routes/todos');
 
 var app = express();
 
+app.use(favicon());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 app.disable('x-powered-by');
 
 
@@ -21,7 +27,7 @@ app.use(expressWinston.logger({
             colorize: true
         })
     ],
-    meta: true, // optional: control whether you want to log the meta data about the request (default to true)
+    meta: false, // optional: control whether you want to log the meta data about the request (default to true)
     msg: "HTTP {{req.method}} {{req.url}}" // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
 }));
 

@@ -1,3 +1,5 @@
+"use strict";
+
 var db = require('../util/db'),
     winston = require('winston');
 
