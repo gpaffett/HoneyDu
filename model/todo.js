@@ -15,9 +15,11 @@ var logger = new (winston.Logger)({
 var ToDoSchema = new db.Schema({
     createdBy: String,
     assignedTo: String,
+    description: String,
     content: String,
     dueBy: Date,
     visibility: String,
+    created: {type: Date, default: Date.now()},
     lastModified: Date
 });
 
