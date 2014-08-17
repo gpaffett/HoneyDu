@@ -16,6 +16,8 @@ var router = express.Router();
 //Find All ToDos
 router.get('/', function (req, res) {
 
+    logger.info('user ' + req.user.email + ' is calling /api/restricted');
+
     var field = req.query.field,
         value = req.query.value;
 
@@ -39,6 +41,8 @@ router.get('/', function (req, res) {
 });
 
 router.get('/assignedTo/:id', function (req, res) {
+    logger.info('user ' + req.user.email + ' is calling /api/restricted');
+
     var id = req.params.id;
 
     logger.info('Finding all To Dos Assigned To: ' + id);
@@ -52,6 +56,8 @@ router.get('/assignedTo/:id', function (req, res) {
 });
 
 router.get('/createdBy/:id', function (req, res) {
+    logger.info('user ' + req.user.email + ' is calling /api/restricted');
+
     var id = req.params.id;
 
     logger.info('Finding all To Dos Created By: ' + id);
@@ -65,6 +71,7 @@ router.get('/createdBy/:id', function (req, res) {
 
 //Find To Do by ID
 router.get('/:id', function (req, res) {
+    logger.info('user ' + req.user.email + ' is calling /api/restricted');
     logger.info('Getting by ID');
     var id = req.params.id;
 
@@ -78,6 +85,7 @@ router.get('/:id', function (req, res) {
 
 //Add To Do
 router.post('/', function (req, res) {
+    logger.info('user ' + req.email + ' is calling /api/restricted');
     logger.info('Adding todo');
     var todo = req.body;
 
@@ -91,6 +99,7 @@ router.post('/', function (req, res) {
 
 //Update To Do
 router.put('/:id', function (req, res) {
+    logger.info('user ' + req.user.email + ' is calling /api/restricted');
     logger.info('Updating todo');
 
     var todoId = req.params.id;
@@ -106,6 +115,7 @@ router.put('/:id', function (req, res) {
 
 //Delete To Do
 router.delete('/:id', function (req, res) {
+    logger.info('user ' + req.user.email + ' is calling /api/restricted');
     logger.info('Removing todo');
     var todoId = req.params.id;
 

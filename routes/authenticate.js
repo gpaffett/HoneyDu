@@ -8,15 +8,15 @@ var router = express.Router();
 router.post('/', function (req, res) {
     //TODO validate req.body.username and req.body.password
     //if is invalid, return 401
-    if (!(req.body.username === 'john.doe' && req.body.password === 'foobar')) {
-        res.send(401, 'Wrong user or password');
+    if (!(req.body.email === 'gbpaffett@gmail.com' && req.body.password === 'password')) {
+        res.send(401, {'message': 'Wrong user or password'});
         return;
     }
 
     var profile = {
-        first_name: 'John',
-        last_name: 'Doe',
-        email: 'john@doe.com',
+        first_name: 'Geoff',
+        last_name: 'Paffett',
+        email: 'gbpaffett@gmail.com',
         id: 123
     };
 
@@ -25,3 +25,5 @@ router.post('/', function (req, res) {
 
     res.json({ token: token });
 });
+
+module.exports = router;

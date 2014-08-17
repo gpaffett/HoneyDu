@@ -6,11 +6,15 @@ var honeyDuApp = angular.module('honeyDuApp', [
     'ngRoute', 'ngResource'
 ]);
 
-honeyDuApp.config(['$routeProvider',
-    function ($routeProvider) {
+honeyDuApp.config(['$routeProvider', '$httpProvider',
+    function ($routeProvider, $httpProvider) {
         $routeProvider.
             when('/', {
                 templateUrl: 'partials/title.html'
+            }).
+            when('/login', {
+                templateUrl: 'partials/login.html',
+                controller: 'UserCtrl'
             }).
             when('/:userId', {
                 templateUrl: 'partials/main.html',
@@ -19,6 +23,8 @@ honeyDuApp.config(['$routeProvider',
             otherwise({
                 redirectTo: '/'
             });
+
+            $httpProvider.interceptors.push('authInterceptor');
     }]);
 
 

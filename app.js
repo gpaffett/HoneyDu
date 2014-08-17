@@ -9,7 +9,8 @@ var bodyParser = require('body-parser');
 var expressWinston = require('express-winston');
 var expressJwt = require('express-jwt');
 
-var todos = require('./routes/todos');
+var todos = require('./routes/todos'),
+    authenticate =  require('./routes/authenticate');
 
 var app = express();
 
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.disable('x-powered-by');
+app.enable('trust proxy');
 
 
 app.use(expressWinston.logger({
@@ -32,7 +34,9 @@ app.use(expressWinston.logger({
     msg: "HTTP {{req.method}} {{req.url}}" // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
 }));
 
-app.use('/api', expressJwt({secret: 'secret'}));
+app.use('/authenticate', authenticate);
+
+app.use('/todos', expressJwt({secret: 'secret'}));
 
 app.use('/todos', todos);
 
