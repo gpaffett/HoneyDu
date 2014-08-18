@@ -4,9 +4,9 @@ var Schema = mongoose.Schema;
 exports.mongoose = mongoose;
 exports.Schema = Schema;
 
-var username = "medecisionSampleApp",
-    password = "password",
-    address = "pa-d-gpaff01/medecisionSample";
+var username = "honeyduapp",
+    password = "n0ty0u",
+    address = 'ds063449.mongolab.com:63449/datafoxx';
 
 connect();
 function connect() {

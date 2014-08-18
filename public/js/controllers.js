@@ -1,20 +1,54 @@
 'use strict';
 
 /* Controllers */
-honeyDuApp.controller('ToDoCtrl', ['$scope', '$routeParams', 'ToDos',
-    function ($scope, $routeParams, ToDos) {
+var ToDoCtrl = function ($scope, $modal, $routeParams, $log, ToDos) {
 
+    init();
+
+    function init() {
         ToDos.query({'field': 'assignedTo',
-            'value': $routeParams.userId
-        }, function (todos) {
+            'value': $routeParams.userId});
+    }
+
+    $scope.addTodo = function addTodo() {
+
+        ToDos.post({}, function (todos) {
             console.log("Success! " + todos);
             $scope.todos = todos;
         }, function () {
             console.log("Failure!");
             $scope.message = 'UhOh';
         });
+    }
 
-    }]);
+    $scope.open = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'partials/addTodo.html',
+            controller: ModalInstanceCtrl,
+            size: size
+        });
+
+        modalInstance.result.then(function (selectedItem) {
+            $scope.selected = selectedItem;
+        }, function () {
+            $log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+
+    var ModalInstanceCtrl = function ($scope, $modalInstance) {
+
+        $scope.ok = function () {
+            $modalInstance.close();
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    };
+}
+
+honeyDuApp.controller('ToDoCtrl', ['$scope', '$modal', '$routeParams', '$log', 'ToDos',
+    ToDoCtrl ]);
 
 honeyDuApp.controller('UserCtrl', ['$scope', '$window', '$location', 'AuthService',
     function ($scope, $window, $location, AuthService) {

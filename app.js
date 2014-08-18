@@ -2,19 +2,19 @@
 
 var express = require('express');
 var path = require('path');
-var favicon = require('static-favicon');
+//var favicon = require('serve-favicon');
 var winston = require('winston');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressWinston = require('express-winston');
-var expressJwt = require('express-jwt');
+//var expressJwt = require('express-jwt');
 
 var todos = require('./routes/todos'),
     authenticate =  require('./routes/authenticate');
 
 var app = express();
 
-app.use(favicon());
+//app.use(favicon());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
@@ -36,7 +36,7 @@ app.use(expressWinston.logger({
 
 app.use('/authenticate', authenticate);
 
-app.use('/todos', expressJwt({secret: 'secret'}));
+//app.use('/todos', expressJwt({secret: 'secret'}));
 
 app.use('/todos', todos);
 
