@@ -1,29 +1,42 @@
 "use strict";
 
 var express = require('express');
-var jwt = require('jsonwebtoken');
+var jwt = require('jsonwebtoken'),
+    user = require('../model/user'),
+    winston = require('winston'),
+    SHARED_SECRET = 'open_sesame';
+
+var logger = new (winston.Logger)({
+    transports: [
+        new winston.transports.Console({
+            json: true,
+            colorize: true
+        })
+    ]
+});
 
 var router = express.Router();
 
 router.post('/', function (req, res) {
-    //TODO validate req.body.username and req.body.password
-    //if is invalid, return 401
-    if (!(req.body.email === 'gbpaffett@gmail.com' && req.body.password === 'password')) {
-        res.send(401, {'message': 'Wrong user or password'});
-        return;
-    }
+    var username = req.body.username,
+        password = req.body.password;
 
-    var profile = {
-        first_name: 'Geoff',
-        last_name: 'Paffett',
-        email: 'gbpaffett@gmail.com',
-        id: 123
-    };
+    logger.info("Attempting to validate " + username);
+    user.validate(username, password, function(err, user, reason) {
+      if (user) {
+          logger.info(username + " authenticated as " + user.firstName + " " + user.lastName);
+          // We are sending the profile inside the token
+          var token = jwt.sign(user, SHARED_SECRET, { expiresInMinutes: 60*5 });
 
-    // We are sending the profile inside the token
-    var token = jwt.sign(profile, 'secret', { expiresInMinutes: 60*5 });
+          res.json({ token: token });
+          return;
+      }
 
-    res.json({ token: token });
+      logger.error(username + " Failed authentication");
+      res.send(401, {'message': 'Wrong user or password', reasonCode: reason});
+    });
+
+
 });
 
 module.exports = router;

@@ -10,7 +10,8 @@ var expressWinston = require('express-winston');
 //var expressJwt = require('express-jwt');
 
 var todos = require('./routes/todos'),
-    authenticate =  require('./routes/authenticate');
+    authenticate =  require('./routes/authenticate'),
+    users = require('./routes/users');
 
 var app = express();
 
@@ -39,6 +40,7 @@ app.use('/authenticate', authenticate);
 //app.use('/todos', expressJwt({secret: 'secret'}));
 
 app.use('/todos', todos);
+app.use('/users', users);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
