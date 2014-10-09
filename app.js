@@ -37,7 +37,7 @@ app.use(expressWinston.logger({
 
 app.use('/authenticate', authenticate);
 
-//app.use('/todos', expressJwt({secret: 'secret'}));
+//app.use('/todos', expressJwt({secret: 'open_sesame'}));
 
 app.use('/todos', todos);
 app.use('/users', users);
